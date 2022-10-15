@@ -105,9 +105,13 @@ public class Jugador {
             return 1;
         }
     */
-        return 1;
+        return this.getCedulaAsInt() - jugadorAComparar.getCedulaAsInt();
     }
-
+    private int getCedulaAsInt(){
+        String cedula = this.getCedula().replace(".","");
+        cedula = cedula.replace("-","");
+        return Integer.parseInt(cedula);
+    }
     @Override
     public String toString() {
         return Cedula+";"+Nombre+";"+Edad+";"+Escuela+";"+TipoJugador.getValor();

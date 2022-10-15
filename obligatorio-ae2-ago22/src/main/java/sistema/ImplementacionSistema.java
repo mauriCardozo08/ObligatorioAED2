@@ -1,18 +1,36 @@
 package sistema;
 
+import dominio.CentroUrbano;
 import dominio.Jugador;
 import dominio.JugadorBuscado;
 import interfaz.*;
 import interfaz.ABB.ArbolBinarioBusqueda;
 import interfaz.Lista.Lista;
+import interfaz.Lista.Nodo;
+
+import java.util.EnumSet;
 
 public class ImplementacionSistema implements Sistema {
     private int maximoCentros;
     public ArbolBinarioBusqueda jugadores;
+    public Lista<Lista<Jugador>> jugadoresPorTipo;
+
+    public Lista<CentroUrbano> centrosUrbanos;
+    public ImplementacionSistema(){
+    }
 
     public ImplementacionSistema(int maxCentros){
         inicializarSistema(maxCentros);
         jugadores = new ArbolBinarioBusqueda();
+        centrosUrbanos =  new Lista<CentroUrbano>();
+        inicializarListaJugadoresPorTipo();
+    }
+    private void inicializarListaJugadoresPorTipo(){
+        jugadoresPorTipo = new Lista<Lista<Jugador>>();
+        EnumSet.allOf(TipoJugador.class).forEach(tipo -> {
+            Lista<Jugador> lista = new Lista<Jugador>();
+            jugadoresPorTipo.agregarAlFinal(lista);
+        });
     }
     @Override
     public Retorno inicializarSistema(int maxCentros) {
@@ -75,6 +93,8 @@ public class ImplementacionSistema implements Sistema {
         if(nuevoJugador.validar()){
             if(nuevoJugador.validarFormatoCedula()){
                 if(jugadores.insertar(nuevoJugador)){
+                    int indice = nuevoJugador.getTipoJugador().getIndice();
+                    jugadoresPorTipo.obtener(indice).agregarAlFinal(nuevoJugador);
                     return Retorno.ok();
                 }else {
                     return Retorno.error3("Ya existe un jugador registrado con esa cedula");
@@ -124,15 +144,40 @@ public class ImplementacionSistema implements Sistema {
     @Override
     public Retorno listarJugadoresPorTipo(TipoJugador unTipo) {
         if(unTipo!=null){
-            return Retorno.ok(jugadores.listarJugadoresPorTipo(unTipo));
+            int indice = unTipo.getIndice();
+            Lista<Jugador> jugadoresSeleccionadosPorTipo = jugadoresPorTipo.obtener(indice);
+            return Retorno.ok(jugadoresSeleccionadosPorTipo.imprimirLista());
         }else{
             return Retorno.error1("El tipo no puede ser null.");
         }
     }
-
     @Override
     public Retorno registrarCentroUrbano(String codigo, String nombre) {
-        return Retorno.noImplementada();
+        if(maximoCentros>centrosUrbanos.getLargo()){
+            CentroUrbano nuevoCentro = new CentroUrbano(codigo,nombre);
+            if(nuevoCentro.validar()){
+                if(validarCodigoCentroUrbano(codigo)){
+                    centrosUrbanos.agregarAlFinal(nuevoCentro);
+                    return Retorno.ok();
+                }else{
+                    return Retorno.error2("Ya existe un centro con ese codigo");
+                }
+            }else{
+                return Retorno.error2("Los datos no pueden ser vacios o nullos");
+            }
+        }else{
+            return Retorno.error1("El sistema ya no puede registrar mas centros urbanos");
+        }
+    }
+    private Boolean validarCodigoCentroUrbano(String codigoCentroUrbano){
+        Nodo<CentroUrbano> centroAuxiliar = centrosUrbanos.getPrimero();
+        while(centroAuxiliar != null) {
+            if(centroAuxiliar.getValor().getCodigo().equals(codigoCentroUrbano)){
+                return false;
+            }
+            centroAuxiliar = centroAuxiliar.getSiguiente();
+        }
+        return true;
     }
 
     @Override

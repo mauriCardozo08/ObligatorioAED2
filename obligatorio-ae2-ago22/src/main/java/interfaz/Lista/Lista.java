@@ -74,4 +74,14 @@ public class Lista<T> {
         }
         return null;
     }
+
+    public String imprimirLista(){
+        Nodo aux = this.getPrimero();
+        String cadenaDeRetorno = "";
+        while(aux!=null){
+            cadenaDeRetorno+=aux.getValor().toString()+" | ";
+            aux = aux.getSiguiente();
+        }
+        return cadenaDeRetorno;
+    }
 }

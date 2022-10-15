@@ -43,7 +43,7 @@ public class ArbolBinarioBusqueda{
         return null;
     }
     private Boolean insertar(Jugador jugadorAInsertar, NodoABBJugador raiz){
-        if(raiz.getJugador().compareTo(jugadorAInsertar)==-1){
+        if(raiz.getJugador().compareTo(jugadorAInsertar)<0){
             if(raiz.getDerecha()!=null){
                 return insertar(jugadorAInsertar,raiz.getDerecha());
             }else{
@@ -77,7 +77,7 @@ public class ArbolBinarioBusqueda{
     private JugadorBuscado obtenerJugador(Jugador jugadorBuscado, NodoABBJugador raiz, int cantidadDeElementosRecorridos){
         if(raiz==null) return null;
 
-        if(raiz.getJugador().compareTo(jugadorBuscado)==-1){
+        if(raiz.getJugador().compareTo(jugadorBuscado)<0){
             return obtenerJugador(jugadorBuscado,raiz.getDerecha(),cantidadDeElementosRecorridos+1);
         }else if(raiz.getJugador().compareTo(jugadorBuscado)==0){
             return new JugadorBuscado(raiz.getJugador(),cantidadDeElementosRecorridos);
@@ -86,27 +86,40 @@ public class ArbolBinarioBusqueda{
         }
     }
 
+
+
+
     public String listarJugadoresPorCedulaAscendente(){
         return listarJugadoresPorCedulaAscendente(getRaiz(),"");
     }
     private String listarJugadoresPorCedulaAscendente(NodoABBJugador raiz, String cadenaDeJugadores){
         if(raiz!=null){
-            listarJugadoresPorCedulaAscendente(raiz.getIzquierda(),cadenaDeJugadores);
+            cadenaDeJugadores = listarJugadoresPorCedulaAscendente(raiz.getIzquierda(),cadenaDeJugadores);
             cadenaDeJugadores+="|"+raiz.getJugador().toString();
-            listarJugadoresPorCedulaAscendente(raiz.getDerecha(),cadenaDeJugadores);
+            cadenaDeJugadores = listarJugadoresPorCedulaAscendente(raiz.getDerecha(),cadenaDeJugadores);
         }
         return cadenaDeJugadores;
     }
+
+
+
 
     public String listarJugadoresPorCedulaDescendente(){
         return listarJugadoresPorCedulaDescendente(getRaiz(),"");
     }
     private String listarJugadoresPorCedulaDescendente(NodoABBJugador raiz, String cadenaDeJugadores){
         if(raiz!=null){
-            listarJugadoresPorCedulaDescendente(raiz.getIzquierda(),cadenaDeJugadores);
+            cadenaDeJugadores = listarJugadoresPorCedulaDescendente(raiz.getDerecha(),cadenaDeJugadores);
             cadenaDeJugadores+="|"+raiz.getJugador().toString();
-            listarJugadoresPorCedulaDescendente(raiz.getDerecha(),cadenaDeJugadores);
+            cadenaDeJugadores = listarJugadoresPorCedulaDescendente(raiz.getIzquierda(),cadenaDeJugadores);
         }
         return cadenaDeJugadores;
+    }
+
+
+
+
+    public String toUrl() {
+        return VisualizadorGraphViz.arbolBinToUrl(raiz, a -> a.jugador, a -> a.izquierda, a -> a.derecha);
     }
 }
