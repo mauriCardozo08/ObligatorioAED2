@@ -7,7 +7,8 @@ import interfaz.TipoJugador;
 public class Main {
     public static void main(String[] args) {
         int cantidadCentros = 6;
-        ImplementacionSistema sistema =  new ImplementacionSistema(cantidadCentros);
+        ImplementacionSistema sistema =  new ImplementacionSistema();
+        sistema.inicializarSistema(cantidadCentros);
 
         //Pruebas
         //explorarCentroUrbano(sistema);
@@ -80,5 +81,8 @@ public class Main {
         String codigo2 = "CU2";
         String nombre2 = "Centro Urbano 2";
         System.out.println(sistema.registrarCentroUrbano(codigo2,nombre2).getValorString());
+        String codigo3 = "CU2";
+        String nombre3 = "Centro Urbano 2";
+        System.out.println(sistema.registrarCentroUrbano(codigo3,nombre3).getValorString());
     }
 }

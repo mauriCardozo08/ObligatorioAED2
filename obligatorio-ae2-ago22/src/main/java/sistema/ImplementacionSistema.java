@@ -5,24 +5,21 @@ import dominio.Jugador;
 import dominio.JugadorBuscado;
 import interfaz.*;
 import interfaz.ABB.ArbolBinarioBusqueda;
+import interfaz.Grafo.Camino;
+import interfaz.Grafo.Grafo;
+import interfaz.Grafo.Vertice;
 import interfaz.Lista.Lista;
 import interfaz.Lista.Nodo;
 
 import java.util.EnumSet;
 
 public class ImplementacionSistema implements Sistema {
-    private int maximoCentros;
     public ArbolBinarioBusqueda jugadores;
     public Lista<Lista<Jugador>> jugadoresPorTipo;
+    public Grafo centrosUrbanos;
 
-    public Lista<CentroUrbano> centrosUrbanos;
     public ImplementacionSistema(){
-    }
-
-    public ImplementacionSistema(int maxCentros){
-        inicializarSistema(maxCentros);
         jugadores = new ArbolBinarioBusqueda();
-        centrosUrbanos =  new Lista<CentroUrbano>();
         inicializarListaJugadoresPorTipo();
     }
     private void inicializarListaJugadoresPorTipo(){
@@ -34,12 +31,12 @@ public class ImplementacionSistema implements Sistema {
     }
     @Override
     public Retorno inicializarSistema(int maxCentros) {
-       if(maxCentros>5){
-           this.maximoCentros = maxCentros;
+        if(maxCentros>5){
+            centrosUrbanos = new Grafo(maxCentros);
             return Retorno.ok();
-       }else{
-           return Retorno.error1("La cantidad de centros debe ser mayor a 5");
-       }
+        }else {
+            return Retorno.error1("La cantidad de centros debe ser mayor a 5");
+        }
     }
 
     @Override
@@ -153,11 +150,11 @@ public class ImplementacionSistema implements Sistema {
     }
     @Override
     public Retorno registrarCentroUrbano(String codigo, String nombre) {
-        if(maximoCentros>centrosUrbanos.getLargo()){
+        if(centrosUrbanos.aptoIngreso()){
             CentroUrbano nuevoCentro = new CentroUrbano(codigo,nombre);
             if(nuevoCentro.validar()){
                 if(validarCodigoCentroUrbano(codigo)){
-                    centrosUrbanos.agregarAlFinal(nuevoCentro);
+                    centrosUrbanos.agregarVertice(new Vertice<CentroUrbano>(nuevoCentro));
                     return Retorno.ok();
                 }else{
                     return Retorno.error2("Ya existe un centro con ese codigo");
@@ -170,19 +167,53 @@ public class ImplementacionSistema implements Sistema {
         }
     }
     private Boolean validarCodigoCentroUrbano(String codigoCentroUrbano){
-        Nodo<CentroUrbano> centroAuxiliar = centrosUrbanos.getPrimero();
-        while(centroAuxiliar != null) {
-            if(centroAuxiliar.getValor().getCodigo().equals(codigoCentroUrbano)){
-                return false;
+        Vertice[] centros = new Vertice[centrosUrbanos.getMaxVertices()];
+        centros = centrosUrbanos.getVertices();
+        for(int i=0; i<centros.length; i++){
+            if(centros[i]!=null){
+                CentroUrbano centro = (CentroUrbano)centros[i].getVertice();
+                if(centro.getCodigo().equals(codigoCentroUrbano)){
+                    return false;
+                }
             }
-            centroAuxiliar = centroAuxiliar.getSiguiente();
         }
         return true;
     }
 
     @Override
-    public Retorno registrarCamino(String codigoCentroOrigen, String codigoCentroDestino, double costo, double tiempo, double kilometros, EstadoCamino estadoDelCamino) {
+    public Retorno registrarCamino(String codigoCentroOrigen,
+                                   String codigoCentroDestino,
+                                   double costo, double tiempo,
+                                   double kilometros,
+                                   EstadoCamino estadoDelCamino) {
+
+        Camino nuevoCamino = new Camino(costo,tiempo,kilometros,estadoDelCamino);
+        if(nuevoCamino.validarDoubles()){
+            if(nuevoCamino.validarNull() && validarString(codigoCentroOrigen) && validarString(codigoCentroDestino)){
+                if(!validarCodigoCentroUrbano(codigoCentroOrigen)){
+                    if(!validarCodigoCentroUrbano(codigoCentroDestino)){
+                        if(!centrosUrbanos.validarCaminoExistente(codigoCentroOrigen,codigoCentroDestino)){
+                            //Falta agregar camino
+                        }else{
+                            return Retorno.error5("Ya existe un camino definido entre los dos centros");
+                        }
+                    }else{
+                        return Retorno.error4("El centro urbano de destino no existe");
+                    }
+                }else{
+                    return Retorno.error3("El centro urbano de origen no existe");
+                }
+            }else{
+                return Retorno.error2("Los codigos y el estado del camino no pueden ser null o vacios.");
+            }
+        }else{
+            return Retorno.error1("Los valores costo, tiempo y kilometros deben ser mayores a 0.");
+        }
         return Retorno.noImplementada();
+    }
+
+    public boolean validarString(String cadenaDeTextoAValidar){
+        return cadenaDeTextoAValidar!=null && !cadenaDeTextoAValidar.equals("");
     }
 
     @Override
