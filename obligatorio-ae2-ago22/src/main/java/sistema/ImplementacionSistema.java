@@ -188,15 +188,28 @@ public class ImplementacionSistema implements Sistema {
                                    EstadoCamino estadoDelCamino) {
 
         Camino nuevoCamino = new Camino(costo,tiempo,kilometros,estadoDelCamino);
+
+        Retorno validacionDeCamino = validarCamino(nuevoCamino, codigoCentroOrigen, codigoCentroDestino);
+        if(validacionDeCamino.isOk()){
+            if(!centrosUrbanos.validarCaminoExistente(codigoCentroOrigen,codigoCentroDestino)){
+                int indiceCentroOrigen = centrosUrbanos.getIndicePorCodigo(codigoCentroOrigen);
+                int indiceCentroDestino = centrosUrbanos.getIndicePorCodigo(codigoCentroDestino);
+                nuevoCamino.setExiste(true);
+                centrosUrbanos.agregarCamino(indiceCentroOrigen, indiceCentroDestino, nuevoCamino);
+            }else{
+                return Retorno.error5("Ya existe un camino definido entre los dos centros");
+            }
+
+        }
+        return validacionDeCamino;
+    }
+
+    private Retorno validarCamino(Camino nuevoCamino, String codigoCentroOrigen, String codigoCentroDestino){
         if(nuevoCamino.validarDoubles()){
             if(nuevoCamino.validarNull() && validarString(codigoCentroOrigen) && validarString(codigoCentroDestino)){
                 if(!validarCodigoCentroUrbano(codigoCentroOrigen)){
                     if(!validarCodigoCentroUrbano(codigoCentroDestino)){
-                        if(!centrosUrbanos.validarCaminoExistente(codigoCentroOrigen,codigoCentroDestino)){
-                            //Falta agregar camino
-                        }else{
-                            return Retorno.error5("Ya existe un camino definido entre los dos centros");
-                        }
+                        return  Retorno.ok();
                     }else{
                         return Retorno.error4("El centro urbano de destino no existe");
                     }
@@ -209,21 +222,46 @@ public class ImplementacionSistema implements Sistema {
         }else{
             return Retorno.error1("Los valores costo, tiempo y kilometros deben ser mayores a 0.");
         }
-        return Retorno.noImplementada();
     }
-
     public boolean validarString(String cadenaDeTextoAValidar){
         return cadenaDeTextoAValidar!=null && !cadenaDeTextoAValidar.equals("");
     }
 
     @Override
     public Retorno actualizarCamino(String codigoCentroOrigen, String codigoCentroDestino, double costo, double tiempo, double kilometros, EstadoCamino estadoDelCamino) {
-        return Retorno.noImplementada();
+        Camino caminoActualizar = new Camino(costo, tiempo, kilometros, estadoDelCamino);
+
+        Retorno validacionDeCamino = validarCamino(caminoActualizar, codigoCentroOrigen, codigoCentroDestino);
+
+        if(validacionDeCamino.isOk()){
+            if(centrosUrbanos.validarCaminoExistente(codigoCentroOrigen,codigoCentroDestino)){
+                int indiceCentroOrigen = centrosUrbanos.getIndicePorCodigo(codigoCentroOrigen);
+                int indiceCentroDestino = centrosUrbanos.getIndicePorCodigo(codigoCentroDestino);
+                caminoActualizar.setExiste(true);
+                centrosUrbanos.agregarCamino(indiceCentroOrigen, indiceCentroDestino, caminoActualizar);
+            }else{
+                return Retorno.error5("No existe un camino definido entre los dos centros");
+            }
+
+
+        }
+        return validacionDeCamino;
     }
 
     @Override
     public Retorno listadoCentrosCantDeSaltos(String codigoCentroOrigen, int cantidad) {
-        return Retorno.noImplementada();
+        int indice = centrosUrbanos.getIndicePorCodigo(codigoCentroOrigen);
+
+        if(cantidad>0){
+            if(indice != -1){
+                centrosUrbanos.bfs(centrosUrbanos.getCentro(indice), cantidad);
+                return Retorno.ok();
+            }else{
+                return Retorno.error2("El centro no está registrado en el sistema");
+            }
+        }else{
+            return Retorno.error1("La cantidad debe ser mayor a 0");
+        }
     }
 
     @Override

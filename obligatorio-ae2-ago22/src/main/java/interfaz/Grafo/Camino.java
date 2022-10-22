@@ -9,7 +9,9 @@ public class Camino {
     private double kilometros;
     private EstadoCamino estado;
 
-    public Camino(){}
+    public Camino(){
+        this.existe =false;
+    }
 
     public Camino(double costo, double tiempo, double kilometros, EstadoCamino estado) {
         this.existe = false;

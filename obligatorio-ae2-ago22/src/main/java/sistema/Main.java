@@ -1,6 +1,8 @@
 package sistema;
 
 import interfaz.ABB.ArbolBinarioBusqueda;
+import interfaz.EstadoCamino;
+import interfaz.Grafo.Camino;
 import interfaz.Retorno;
 import interfaz.TipoJugador;
 
@@ -19,6 +21,10 @@ public class Main {
         //listarJugadoresAscendente(sistema);
         //listarJugadoresPorTipo(sistema);
         registrarCentroUrbano(sistema);
+        registrarCaminos(sistema);
+        //actualizarCaminos(sistema);
+        //System.out.println(sistema.centrosUrbanos.toUrl());
+        listarCentrosUrbanos(sistema);
     }
 
     public static void explorarCentroUrbano(ImplementacionSistema sistema){
@@ -81,8 +87,39 @@ public class Main {
         String codigo2 = "CU2";
         String nombre2 = "Centro Urbano 2";
         System.out.println(sistema.registrarCentroUrbano(codigo2,nombre2).getValorString());
-        String codigo3 = "CU2";
-        String nombre3 = "Centro Urbano 2";
+        String codigo3 = "CU3";
+        String nombre3 = "Centro Urbano 3";
         System.out.println(sistema.registrarCentroUrbano(codigo3,nombre3).getValorString());
+
+        String codigo4 = "CU4";
+        String nombre4 = "Centro Urbano 4";
+        System.out.println(sistema.registrarCentroUrbano(codigo4,nombre4).getValorString());
+        String codigo5 = "CU5";
+        String nombre5 = "Centro Urbano 5";
+        System.out.println(sistema.registrarCentroUrbano(codigo5,nombre5).getValorString());
+        String codigo6 = "CU6";
+        String nombre6 = "Centro Urbano 6";
+        System.out.println(sistema.registrarCentroUrbano(codigo6,nombre6).getValorString());
+
+    }
+
+    public static void registrarCaminos(ImplementacionSistema sistema){
+        EstadoCamino estadoCamino1 = EstadoCamino.BUENO;
+        System.out.println(sistema.registrarCamino("CU3", "CU2", 1, 14, 25, estadoCamino1).getValorString());
+
+        EstadoCamino estadoCamino2 = EstadoCamino.MALO;
+        System.out.println(sistema.registrarCamino("CU1", "CU2", 2, 20, 100, estadoCamino2).getValorString());
+    }
+
+    public static void actualizarCaminos(ImplementacionSistema sistema) {
+        EstadoCamino estadoCamino1 = EstadoCamino.BUENO;
+        System.out.println(sistema.actualizarCamino("CU1", "CU2", 1, 14, 25, estadoCamino1).getValorString());
+
+        EstadoCamino estadoCamino2 = EstadoCamino.MALO;
+        System.out.println(sistema.actualizarCamino("CU3", "CU2", 2, 20, 100, estadoCamino2).getValorString());
+    }
+
+    public static void listarCentrosUrbanos(ImplementacionSistema sistema) {
+        sistema.listadoCentrosCantDeSaltos("CU1", 4).getValorString();
     }
 }

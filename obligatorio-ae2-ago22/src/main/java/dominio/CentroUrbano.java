@@ -32,4 +32,8 @@ public class CentroUrbano {
         return getNombre()!=null && !getNombre().equals("") && getCodigo()!=null && !getCodigo().equals("");
     }
 
+    public String toString(){
+        return  "Codigo: "+this.getCodigo() + " - Nombre: "+this.getNombre();
+    }
+
 }
