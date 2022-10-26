@@ -33,7 +33,7 @@ public class CentroUrbano {
     }
 
     public String toString(){
-        return  "Codigo: "+this.getCodigo() + " - Nombre: "+this.getNombre();
+        return  this.getCodigo()+";"+this.getNombre();
     }
 
 }

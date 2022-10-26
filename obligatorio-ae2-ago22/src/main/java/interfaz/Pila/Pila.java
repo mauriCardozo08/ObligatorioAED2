@@ -1,16 +1,17 @@
 package interfaz.Pila;
 
+import dominio.CentroUrbano;
 import interfaz.Lista.Nodo;
 
-public class Pila<T> {
-    private Nodo<T> inicio;
+public class Pila {
+    private NodoCentroUrbano inicio;
     private int cantElementos;
 
-    public Nodo getInicio() {
+    public NodoCentroUrbano getInicio() {
         return inicio;
     }
 
-    public void setInicio(Nodo<T> nodo) {
+    public void setInicio(NodoCentroUrbano nodo) {
         this.inicio = nodo;
     }
 
@@ -18,15 +19,14 @@ public class Pila<T> {
         this.inicio = null;
     }
 
-    public void agregarElemento(Nodo<T> nodo) {
-            Nodo nuevo = new Nodo(nodo);
-            nuevo.setSiguiente(getInicio());
-            inicio = nuevo;
-            cantElementos ++;
+    public void agregarElemento(NodoCentroUrbano nuevo) {
+        nuevo.setSiguiente(getInicio());
+        inicio = nuevo;
+        cantElementos ++;
     }
 
-    public Nodo<T> eliminarElemento() {
-        Nodo<T> elementoAEliminar = null;
+    public NodoCentroUrbano eliminarElemento() {
+        NodoCentroUrbano elementoAEliminar = null;
         if (!this.esVacia()) {
             elementoAEliminar = this.inicio;
             inicio = getInicio().getSiguiente();

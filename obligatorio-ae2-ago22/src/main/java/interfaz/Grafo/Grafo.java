@@ -3,9 +3,11 @@ package interfaz.Grafo;
 import dominio.CentroUrbano;
 import interfaz.ABB.VisualizadorGraphViz;
 import interfaz.Lista.Nodo;
+import interfaz.Pila.NodoCentroUrbano;
 import interfaz.Pila.Pila;
 
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 public class Grafo {
@@ -13,6 +15,10 @@ public class Grafo {
     private Camino[][] aristas;
     private final int maxVertices;
     private int largo=0;
+
+    public Camino[][] getAristas() {
+        return aristas;
+    }
 
     public Grafo(int maxVertices) {
         this.vertices = new Vertice[maxVertices];
@@ -83,40 +89,34 @@ public class Grafo {
         return VisualizadorGraphViz.grafoToUrl(vertices,aristas, a->a.getExiste(), v->v.getVertice().toString(), a->String.format("%.2f",a.getKilometros()));
     }
 
-    public void bfs(CentroUrbano centroOrigen, int cantidadDeSaltos) {
-        Pila<CentroUrbano> frontera = new Pila<CentroUrbano>();
-        boolean[] visitados=new boolean[largo];
-        Nodo<CentroUrbano> nodoCentroOrigen = new Nodo<CentroUrbano>(centroOrigen);
-        frontera.agregarElemento(nodoCentroOrigen);
-        int cantidadNivActual=1;
-        int cantidadNivSiguiente=0;
-        int cantidadSaltosHastaAhora=0;
-        
-        while (!frontera.esVacia()){//es vacia
-            CentroUrbano vExplorar= (CentroUrbano) frontera.eliminarElemento().getValor();
-            cantidadNivActual-=1;
+    public String dfs(CentroUrbano centroOrigen, int cantidadDeSaltos) {
+        String retorno = "";
+        Pila frontera = new Pila();
+        int contador = 1;
+        boolean[] visitados=new boolean[maxVertices];
+
+        frontera.agregarElemento(new NodoCentroUrbano(centroOrigen));
+
+        while (!frontera.esVacia()){
+            CentroUrbano vExplorar = frontera.eliminarElemento().getValor();
             int indiceCentroUrbano = getIndicePorCodigo(vExplorar.getCodigo());
             if(!visitados[indiceCentroUrbano]){
-                
-                System.out.println("Nivel "+cantidadSaltosHastaAhora+":"+ vertices[indiceCentroUrbano]);
+                contador++;
+                retorno += vertices[indiceCentroUrbano].getVertice().toString()+"|";
                 visitados[indiceCentroUrbano]=true;
                 for (int vAdy = 0; vAdy < maxVertices; vAdy++) {
                     if(esAdyacente(indiceCentroUrbano,vAdy)){
-                        Nodo<CentroUrbano> nodoAuxiliar = (Nodo<CentroUrbano>) vertices[vAdy].getVertice();
-                        frontera.agregarElemento(nodoAuxiliar);
-                        cantidadNivSiguiente+=1;
+                        CentroUrbano centroAuxiliar = (CentroUrbano)vertices[vAdy].getVertice();
+                        frontera.agregarElemento(new NodoCentroUrbano(centroAuxiliar));
                     }
                 }
-                if(cantidadNivActual==0){
-                    cantidadSaltosHastaAhora++;
-                    cantidadNivActual=cantidadNivSiguiente;
-                    cantidadNivSiguiente=0;
-                }
-
             }
 
+            if(contador>cantidadDeSaltos){
+                return retorno;
+            }
         }
-
+        return retorno;
 
 
     }
@@ -127,5 +127,36 @@ public class Grafo {
 
     public CentroUrbano getCentro(int indice) {
         return (CentroUrbano) vertices[indice].getVertice();
+    }
+
+    public Map<String, Double> dijsktra(int centroUrbano, String determinante){
+        double[] distancia = new double[maxVertices];
+        boolean[] visitados = new boolean[maxVertices];
+        int[] padres =  new int[maxVertices];
+
+        distancia[centroUrbano]=0;
+        padres[centroUrbano]=centroUrbano;
+
+        while(!estaTodoVisitado(visitados,padres)){
+            int vExplorar = dameElDeMenorDistanciaNoVisitado(distancia,visitados);
+            double distanciaV = distancia[vExplorar];
+            for (int vAdy = 0; vAdy < ; vAdy++) {
+                if(esAdyacente(vExplorar,vAdy)){
+                    double dAdy;
+                    if(determinante.equals("K")){
+                        dAdy = distanciaV + aristas[vExplorar][vAdy].getKilometros();
+                    }else{
+                        dAdy = distanciaV + aristas[vExplorar][vAdy].getCosto();
+                    }
+
+                    if(dAdy < distancia[vAdy]){
+                        distancia[vAdy] = dAdy;
+                        padres[vAdy] = vExplorar;
+                    }
+
+                    visitados[vExplorar] = true;
+                }
+            }
+        }
     }
 }

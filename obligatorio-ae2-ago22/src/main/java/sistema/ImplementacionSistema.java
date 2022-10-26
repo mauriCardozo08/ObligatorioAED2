@@ -252,10 +252,13 @@ public class ImplementacionSistema implements Sistema {
     public Retorno listadoCentrosCantDeSaltos(String codigoCentroOrigen, int cantidad) {
         int indice = centrosUrbanos.getIndicePorCodigo(codigoCentroOrigen);
 
-        if(cantidad>0){
+        if(cantidad>=0){
             if(indice != -1){
-                centrosUrbanos.bfs(centrosUrbanos.getCentro(indice), cantidad);
-                return Retorno.ok();
+                if(cantidad>0){
+                    return Retorno.ok(centrosUrbanos.dfs(centrosUrbanos.getCentro(indice), cantidad));
+                }else{
+                    return Retorno.ok(centrosUrbanos.getCentro(indice).toString());
+                }
             }else{
                 return Retorno.error2("El centro no está registrado en el sistema");
             }
@@ -266,11 +269,47 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno viajeCostoMinimoKilometros(String codigoCentroOrigen, String codigoCentroDestino) {
-        return Retorno.noImplementada();
+        if(validarString(codigoCentroDestino) && validarString(codigoCentroDestino)){
+            if(validarCodigoCentroUrbano(codigoCentroOrigen)){
+                if(validarCodigoCentroUrbano(codigoCentroDestino)){
+                    int indiceOrigen =centrosUrbanos.getIndicePorCodigo(codigoCentroOrigen);
+                    int indiceDestino = centrosUrbanos.getIndicePorCodigo(codigoCentroDestino);
+                    if(centrosUrbanos.getAristas()[indiceOrigen][indiceDestino].getExiste()){
+
+                    }else{
+                        return Retorno.error4("No hay camino entre el centro de origen y el de destino");
+                    }
+                }else{
+                    return Retorno.error3("No existe el centro de destino");
+                }
+            }else {
+                return Retorno.error2("No existe el centro origen");
+            }
+        }else{
+            return Retorno.error1("Los codigos no pueden ser vacios o nulos");
+        }
     }
 
     @Override
     public Retorno viajeCostoMinimoMonedas(String codigoCentroOrigen, String codigoCentroDestino) {
-        return Retorno.noImplementada();
+        if(validarString(codigoCentroDestino) && validarString(codigoCentroDestino)){
+            if(validarCodigoCentroUrbano(codigoCentroOrigen)){
+                if(validarCodigoCentroUrbano(codigoCentroDestino)){
+                    int indiceOrigen =centrosUrbanos.getIndicePorCodigo(codigoCentroOrigen);
+                    int indiceDestino = centrosUrbanos.getIndicePorCodigo(codigoCentroDestino);
+                    if(centrosUrbanos.getAristas()[indiceOrigen][indiceDestino].getExiste()){
+
+                    }else{
+                        return Retorno.error4("No hay camino entre el centro de origen y el de destino");
+                    }
+                }else{
+                    return Retorno.error3("No existe el centro de destino");
+                }
+            }else {
+                return Retorno.error2("No existe el centro origen");
+            }
+        }else{
+            return Retorno.error1("Los codigos no pueden ser vacios o nulos");
+        }
     }
 }

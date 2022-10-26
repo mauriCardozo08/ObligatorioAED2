@@ -109,6 +109,12 @@ public class Main {
 
         EstadoCamino estadoCamino2 = EstadoCamino.MALO;
         System.out.println(sistema.registrarCamino("CU1", "CU2", 2, 20, 100, estadoCamino2).getValorString());
+
+        EstadoCamino estadoCamino3 = EstadoCamino.MALO;
+        System.out.println(sistema.registrarCamino("CU2", "CU3", 2, 20, 100, estadoCamino3).getValorString());
+
+        EstadoCamino estadoCamino4 = EstadoCamino.MALO;
+        System.out.println(sistema.registrarCamino("CU3", "CU4", 2, 20, 100, estadoCamino3).getValorString());
     }
 
     public static void actualizarCaminos(ImplementacionSistema sistema) {
@@ -120,6 +126,6 @@ public class Main {
     }
 
     public static void listarCentrosUrbanos(ImplementacionSistema sistema) {
-        sistema.listadoCentrosCantDeSaltos("CU1", 4).getValorString();
+        System.out.println(sistema.listadoCentrosCantDeSaltos("CU1", 0).getValorString());
     }
 }
