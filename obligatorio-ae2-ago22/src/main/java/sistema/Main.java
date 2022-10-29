@@ -14,7 +14,7 @@ public class Main {
 
         //Pruebas
         //explorarCentroUrbano(sistema);
-        registrarJugadores(sistema);
+        //registrarJugadores(sistema);
         //Falta filtrar jugadores
         //buscarJugadorPorCedula(sistema);
         //listarJugadoresDescendente(sistema);
@@ -24,7 +24,8 @@ public class Main {
         registrarCaminos(sistema);
         //actualizarCaminos(sistema);
         //System.out.println(sistema.centrosUrbanos.toUrl());
-        listarCentrosUrbanos(sistema);
+        //listarCentrosUrbanos(sistema);
+        calcularCaminoMinimo(sistema);
     }
 
     public static void explorarCentroUrbano(ImplementacionSistema sistema){
@@ -90,7 +91,6 @@ public class Main {
         String codigo3 = "CU3";
         String nombre3 = "Centro Urbano 3";
         System.out.println(sistema.registrarCentroUrbano(codigo3,nombre3).getValorString());
-
         String codigo4 = "CU4";
         String nombre4 = "Centro Urbano 4";
         System.out.println(sistema.registrarCentroUrbano(codigo4,nombre4).getValorString());
@@ -100,21 +100,31 @@ public class Main {
         String codigo6 = "CU6";
         String nombre6 = "Centro Urbano 6";
         System.out.println(sistema.registrarCentroUrbano(codigo6,nombre6).getValorString());
-
     }
+
 
     public static void registrarCaminos(ImplementacionSistema sistema){
         EstadoCamino estadoCamino1 = EstadoCamino.BUENO;
-        System.out.println(sistema.registrarCamino("CU3", "CU2", 1, 14, 25, estadoCamino1).getValorString());
+        System.out.println(sistema.registrarCamino("CU1", "CU2", 2, 14, 1, estadoCamino1).getValorString());
 
         EstadoCamino estadoCamino2 = EstadoCamino.MALO;
-        System.out.println(sistema.registrarCamino("CU1", "CU2", 2, 20, 100, estadoCamino2).getValorString());
+        System.out.println(sistema.registrarCamino("CU2", "CU3", 2, 20, 1, estadoCamino2).getValorString());
 
-        EstadoCamino estadoCamino3 = EstadoCamino.MALO;
-        System.out.println(sistema.registrarCamino("CU2", "CU3", 2, 20, 100, estadoCamino3).getValorString());
+        EstadoCamino estadoCamino3 = EstadoCamino.EXCELENTE;
+        System.out.println(sistema.registrarCamino("CU3", "CU4", 200, 50, 1, estadoCamino3).getValorString());
 
-        EstadoCamino estadoCamino4 = EstadoCamino.MALO;
-        System.out.println(sistema.registrarCamino("CU3", "CU4", 2, 20, 100, estadoCamino3).getValorString());
+        EstadoCamino estadoCamino4 = EstadoCamino.EXCELENTE;
+        System.out.println(sistema.registrarCamino("CU4", "CU6", 2, 50, 1, estadoCamino4).getValorString());
+
+        EstadoCamino estadoCamino5 = EstadoCamino.EXCELENTE;
+        System.out.println(sistema.registrarCamino("CU1", "CU6", 200, 50, 1, estadoCamino5).getValorString());
+
+        EstadoCamino estadoCamino6 = EstadoCamino.EXCELENTE;
+        System.out.println(sistema.registrarCamino("CU5", "CU4", 2, 50, 1, estadoCamino6).getValorString());
+
+        EstadoCamino estadoCamino7 = EstadoCamino.EXCELENTE;
+        System.out.println(sistema.registrarCamino("CU3", "CU5", 2, 50, 1, estadoCamino6).getValorString());
+
     }
 
     public static void actualizarCaminos(ImplementacionSistema sistema) {
@@ -127,5 +137,11 @@ public class Main {
 
     public static void listarCentrosUrbanos(ImplementacionSistema sistema) {
         System.out.println(sistema.listadoCentrosCantDeSaltos("CU1", 0).getValorString());
+    }
+
+    public static void calcularCaminoMinimo(ImplementacionSistema sistema){
+        Retorno retorno = sistema.viajeCostoMinimoMonedas("CU1","CU6");
+        System.out.println(retorno.getValorInteger()+"");
+        System.out.println(retorno.getValorString());
     }
 }

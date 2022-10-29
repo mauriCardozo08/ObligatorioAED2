@@ -1,8 +1,6 @@
 package sistema;
 
-import dominio.CentroUrbano;
-import dominio.Jugador;
-import dominio.JugadorBuscado;
+import dominio.*;
 import interfaz.*;
 import interfaz.ABB.ArbolBinarioBusqueda;
 import interfaz.Grafo.Camino;
@@ -270,12 +268,13 @@ public class ImplementacionSistema implements Sistema {
     @Override
     public Retorno viajeCostoMinimoKilometros(String codigoCentroOrigen, String codigoCentroDestino) {
         if(validarString(codigoCentroDestino) && validarString(codigoCentroDestino)){
-            if(validarCodigoCentroUrbano(codigoCentroOrigen)){
-                if(validarCodigoCentroUrbano(codigoCentroDestino)){
+            if(!validarCodigoCentroUrbano(codigoCentroOrigen)){
+                if(!validarCodigoCentroUrbano(codigoCentroDestino)){
                     int indiceOrigen =centrosUrbanos.getIndicePorCodigo(codigoCentroOrigen);
                     int indiceDestino = centrosUrbanos.getIndicePorCodigo(codigoCentroDestino);
                     if(centrosUrbanos.getAristas()[indiceOrigen][indiceDestino].getExiste()){
-
+                        TuplaCaminoMinimo retorno = centrosUrbanos.dijsktra(indiceOrigen,indiceDestino, Determinante.KILOMETROS);
+                        return Retorno.ok((int)retorno.getCostoTotalDelCamino(), retorno.getCadenaDeVertices());
                     }else{
                         return Retorno.error4("No hay camino entre el centro de origen y el de destino");
                     }
@@ -293,12 +292,13 @@ public class ImplementacionSistema implements Sistema {
     @Override
     public Retorno viajeCostoMinimoMonedas(String codigoCentroOrigen, String codigoCentroDestino) {
         if(validarString(codigoCentroDestino) && validarString(codigoCentroDestino)){
-            if(validarCodigoCentroUrbano(codigoCentroOrigen)){
-                if(validarCodigoCentroUrbano(codigoCentroDestino)){
+            if(!validarCodigoCentroUrbano(codigoCentroOrigen)){
+                if(!validarCodigoCentroUrbano(codigoCentroDestino)){
                     int indiceOrigen =centrosUrbanos.getIndicePorCodigo(codigoCentroOrigen);
                     int indiceDestino = centrosUrbanos.getIndicePorCodigo(codigoCentroDestino);
                     if(centrosUrbanos.getAristas()[indiceOrigen][indiceDestino].getExiste()){
-
+                        TuplaCaminoMinimo retorno = centrosUrbanos.dijsktra(indiceOrigen,indiceDestino, Determinante.COSTO);
+                        return Retorno.ok((int)retorno.getCostoTotalDelCamino(), retorno.getCadenaDeVertices());
                     }else{
                         return Retorno.error4("No hay camino entre el centro de origen y el de destino");
                     }
