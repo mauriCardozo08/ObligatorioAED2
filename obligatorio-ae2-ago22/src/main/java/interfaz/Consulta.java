@@ -13,7 +13,7 @@ public class Consulta {
      */
     private NodoConsulta raiz;
 
-    private Consulta(NodoConsulta raiz) {
+    public Consulta(NodoConsulta raiz) {
         Objects.requireNonNull(raiz);
         this.raiz = raiz;
     }

@@ -104,8 +104,11 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno filtrarJugadores(Consulta consulta) {
-        return Retorno.noImplementada();
-        //Preguntar a profesor, que es lo que tenemos que hacer concretamente.
+        if(consulta!=null && consulta.getRaiz()!=null){
+            return Retorno.ok(jugadores.filtrarJugadores(consulta));
+        }else{
+            return Retorno.error1("La consulta no puede ser vacia");
+        }
     }
 
     @Override

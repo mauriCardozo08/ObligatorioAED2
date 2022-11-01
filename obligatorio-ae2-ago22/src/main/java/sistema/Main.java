@@ -1,10 +1,15 @@
 package sistema;
 
 import interfaz.ABB.ArbolBinarioBusqueda;
+import interfaz.Consulta;
 import interfaz.EstadoCamino;
 import interfaz.Grafo.Camino;
+import interfaz.Lista.Lista;
+import interfaz.Lista.Nodo;
 import interfaz.Retorno;
 import interfaz.TipoJugador;
+
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -14,18 +19,19 @@ public class Main {
 
         //Pruebas
         //explorarCentroUrbano(sistema);
-        //registrarJugadores(sistema);
+        registrarJugadores(sistema);
         //Falta filtrar jugadores
         //buscarJugadorPorCedula(sistema);
         //listarJugadoresDescendente(sistema);
         //listarJugadoresAscendente(sistema);
         //listarJugadoresPorTipo(sistema);
-        registrarCentroUrbano(sistema);
-        registrarCaminos(sistema);
+        //registrarCentroUrbano(sistema);
+        //registrarCaminos(sistema);
         //actualizarCaminos(sistema);
         //System.out.println(sistema.centrosUrbanos.toUrl());
         //listarCentrosUrbanos(sistema);
-        calcularCaminoMinimo(sistema);
+        //calcularCaminoMinimo(sistema);
+        filtrarJugadores(sistema);
     }
 
     public static void explorarCentroUrbano(ImplementacionSistema sistema){
@@ -42,21 +48,21 @@ public class Main {
         int edad = 8;
         String escuela = "Escuela 2";
         TipoJugador tipo = TipoJugador.INICIAL;
-        System.out.println(sistema.registrarJugador(cedula,nombre,edad,escuela,tipo).getValorString());
+        sistema.registrarJugador(cedula,nombre,edad,escuela,tipo);
         //------------------------------------------------------------------------
         String cedula2 = "123.123-5";
-        String nombre2 = "Jorge diaz";
-        int edad2 = 4;
+        String nombre2 = "Jorge";
+        int edad2 = 6;
         String escuela2 = "Escuela 1";
         TipoJugador tipo2 = TipoJugador.AVANZADO;
-        System.out.println(sistema.registrarJugador(cedula2,nombre2,edad2,escuela2,tipo2).getValorString());
+        sistema.registrarJugador(cedula2,nombre2,edad2,escuela2,tipo2);
         //------------------------------------------------------------------------
         String cedula3 = "2.332.111-3";
         String nombre3 = "Alberto Perez";
-        int edad3 = 12;
+        int edad3 = 2;
         String escuela3 = "Escuela 2";
         TipoJugador tipo3 = TipoJugador.MEDIO;
-        System.out.println(sistema.registrarJugador(cedula3,nombre3,edad3,escuela3,tipo3).getValorString());
+        sistema.registrarJugador(cedula3,nombre3,edad3,escuela3,tipo3);
 
         System.out.println(sistema.jugadores.toUrl());
     }
@@ -124,7 +130,6 @@ public class Main {
 
         EstadoCamino estadoCamino7 = EstadoCamino.EXCELENTE;
         System.out.println(sistema.registrarCamino("CU3", "CU5", 2, 50, 1, estadoCamino6).getValorString());
-
     }
 
     public static void actualizarCaminos(ImplementacionSistema sistema) {
@@ -143,5 +148,51 @@ public class Main {
         Retorno retorno = sistema.viajeCostoMinimoMonedas("CU1","CU6");
         System.out.println(retorno.getValorInteger()+"");
         System.out.println(retorno.getValorString());
+    }
+
+    public static void filtrarJugadores(ImplementacionSistema sistema){
+        Consulta.NodoConsulta edadNodo =
+                new Consulta.NodoConsulta(
+                        Consulta.TipoNodoConsulta.EdadMayor,
+                        5,
+                        null,
+                        null,
+                        null);
+
+        Consulta.NodoConsulta nombreNodo =
+                new Consulta.NodoConsulta(
+                        Consulta.TipoNodoConsulta.NombreIgual,
+                        0,
+                        "Jorge",
+                        null,
+                        null);
+
+        Consulta.NodoConsulta escuelaNodo =
+                new Consulta.NodoConsulta(
+                        Consulta.TipoNodoConsulta.EscuelaIgual,
+                        0,
+                        "Escuela 2",
+                        null,
+                        null);
+
+        Consulta.NodoConsulta orNodo =
+                new Consulta.NodoConsulta(
+                        Consulta.TipoNodoConsulta.Or,
+                        0,
+                        null,
+                        nombreNodo,
+                        escuelaNodo);
+
+        Consulta.NodoConsulta andNodo =
+                new Consulta.NodoConsulta(
+                        Consulta.TipoNodoConsulta.And,
+                        0,
+                        null,
+                        edadNodo,
+                        orNodo);
+
+        Consulta consultaDePrueba = new Consulta(andNodo);
+
+        System.out.println(sistema.filtrarJugadores(consultaDePrueba).getValorString());
     }
 }

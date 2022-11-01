@@ -2,6 +2,9 @@ package interfaz.ABB;
 
 import dominio.Jugador;
 import dominio.JugadorBuscado;
+import interfaz.Consulta;
+import interfaz.Lista.Lista;
+import interfaz.Lista.Nodo;
 
 public class ArbolBinarioBusqueda{
     private NodoABBJugador raiz;
@@ -86,9 +89,6 @@ public class ArbolBinarioBusqueda{
         }
     }
 
-
-
-
     public String listarJugadoresPorCedulaAscendente(){
         return listarJugadoresPorCedulaAscendente(getRaiz(),"");
     }
@@ -100,10 +100,6 @@ public class ArbolBinarioBusqueda{
         }
         return cadenaDeJugadores;
     }
-
-
-
-
     public String listarJugadoresPorCedulaDescendente(){
         return listarJugadoresPorCedulaDescendente(getRaiz(),"");
     }
@@ -117,6 +113,69 @@ public class ArbolBinarioBusqueda{
     }
 
 
+    public String filtrarJugadores(Consulta consulta){
+        return filtrarJugadores(consulta,getRaiz(),"");
+    }
+    private String filtrarJugadores(Consulta consulta, NodoABBJugador nodoJugador, String cadenaDeJugadores){
+        if(nodoJugador!=null){
+            cadenaDeJugadores = filtrarJugadores(consulta,nodoJugador.getIzquierda(),cadenaDeJugadores);
+            if(validarJugadorConConsulta(consulta.getRaiz(),nodoJugador)){
+                cadenaDeJugadores+="|"+nodoJugador.getJugador().getCedula();
+            }
+            cadenaDeJugadores = filtrarJugadores(consulta,nodoJugador.getDerecha(),cadenaDeJugadores);
+        }
+        return cadenaDeJugadores;
+    }
+
+    private boolean validarJugadorConConsulta(Consulta.NodoConsulta nodo, NodoABBJugador jugador){
+        if(nodo != null){
+            boolean resultadoIzquierda = validarJugadorConConsulta(nodo.getIzq(),jugador);
+            boolean resultadoDerecha = validarJugadorConConsulta(nodo.getDer(),jugador);
+
+            if(nodo.getTipoNodoConsulta().equals(Consulta.TipoNodoConsulta.And) || nodo.getTipoNodoConsulta().equals(Consulta.TipoNodoConsulta.Or)){
+                if(nodo.getTipoNodoConsulta().equals(Consulta.TipoNodoConsulta.And)){
+                    return resultadoIzquierda && resultadoDerecha;
+                }else{
+                    return resultadoIzquierda || resultadoDerecha;
+                }
+            }else{
+                if(nodo.getTipoNodoConsulta().equals(Consulta.TipoNodoConsulta.EdadMayor)){
+                    return jugador.getJugador().getEdad()>nodo.getValorInt();
+
+                }else if(nodo.getTipoNodoConsulta().equals(Consulta.TipoNodoConsulta.EscuelaIgual)){
+                    return jugador.getJugador().getEscuela().equals(nodo.getValorString());
+
+                }else{
+                    return jugador.getJugador().getNombre().equals(nodo.getValorString());
+                }
+            }
+        }
+        return false;
+    }
+    public boolean tieneNietos(Consulta.NodoConsulta nodo){
+        if(nodo.getIzq().getTipoNodoConsulta().equals(Consulta.TipoNodoConsulta.And) || nodo.getIzq().getTipoNodoConsulta().equals(Consulta.TipoNodoConsulta.Or)){
+            return true;
+        }
+        if(nodo.getDer().getTipoNodoConsulta().equals(Consulta.TipoNodoConsulta.And) || nodo.getDer().getTipoNodoConsulta().equals(Consulta.TipoNodoConsulta.Or)){
+            return true;
+        }
+
+        return false;
+
+    }
+
+/*    private Lista obtenerConsultaComoTexto(Consulta consulta){
+        Lista<Nodo<Consulta.NodoConsulta>> retorno = new Lista<>();
+        return obtenerConsultaComoTexto(consulta.getRaiz(), retorno);
+    }
+    private Lista obtenerConsultaComoTexto(Consulta.NodoConsulta nodoConsulta, Lista retorno){
+        if(nodoConsulta!=null){
+            obtenerConsultaComoTexto(nodoConsulta.getIzq(),retorno);
+            retorno.agregarAlFinal(nodoConsulta);
+            obtenerConsultaComoTexto(nodoConsulta.getDer(),retorno);
+        }
+        return retorno;
+    }*/
 
 
     public String toUrl() {
